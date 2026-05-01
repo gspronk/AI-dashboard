@@ -257,6 +257,30 @@ try:
          'st.secrets.get("password"' in dash_src)
     test("dashboard stopt bij mislukte login",
          "st.stop()" in dash_src)
+    # Persistente opslag via GitHub Gist
+    test("dashboard bevat _gist_config helper",
+         "def _gist_config" in dash_src)
+    test("dashboard bevat _gist_fetch helper",
+         "def _gist_fetch" in dash_src)
+    test("dashboard bevat _gist_write helper",
+         "def _gist_write" in dash_src)
+    test("Gist-fetch is gecached met TTL",
+         "@st.cache_data(ttl=" in dash_src)
+    test("load_data probeert Gist-backend eerst",
+         '_gist_config()' in dash_src and 'load_data' in dash_src)
+    test("_write valt terug op lokaal bestand bij Gist-fout",
+         "Val terug op lokaal bestand" in dash_src)
+    test("Vernieuwen-knop bust Gist-cache",
+         "_gist_fetch.clear()" in dash_src)
+    test("sidebar toont actieve opslag-backend",
+         "Opslag: GitHub Gist" in dash_src and "Opslag: lokaal bestand" in dash_src)
+    test("requirements.txt bevat requests",
+         "requests" in open(os.path.join(os.path.dirname(__file__),
+                                         "requirements.txt"), encoding="utf-8").read())
+    test("secrets.toml.example bevat gist_id placeholder",
+         "gist_id" in open(os.path.join(os.path.dirname(__file__),
+                                        ".streamlit", "secrets.toml.example"),
+                           encoding="utf-8").read())
     # Edit-feature voor bestaande milestones
     test("milestones overzicht heeft bewerk-formulier",
          'st.form(f"edit_ms_' in dash_src)

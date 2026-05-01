@@ -183,7 +183,68 @@ def parse_nl_date(s, default_year=2026, start=False):
     return dt.date(year, month, 15)
 
 # ─── DATA FUNCTIONS ───────────────────────────────────────────
+# Persistente opslag werkt via één van twee backends:
+#   1. GitHub Gist  — als 'gist_id' én 'github_token' in st.secrets staan
+#   2. Lokaal bestand kza_data.json — als die secrets ontbreken
+# Zie .streamlit/secrets.toml.example voor setup-instructies.
+GIST_FILENAME = "kza_data.json"
+GIST_API = "https://api.github.com/gists"
+
+def _gist_config():
+    """Return (gist_id, token) als beide secrets gezet zijn, anders (None, None)."""
+    try:
+        gid = st.secrets.get("gist_id", None)
+        tok = st.secrets.get("github_token", None)
+    except Exception:
+        return None, None
+    if gid and tok:
+        return gid, tok
+    return None, None
+
+@st.cache_data(ttl=30, show_spinner=False)
+def _gist_fetch(gist_id, token):
+    """Haal de JSON op uit de gist (gecached, 30s TTL)."""
+    import requests
+    headers = {"Authorization": f"Bearer {token}",
+               "Accept": "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    r = requests.get(f"{GIST_API}/{gist_id}", headers=headers, timeout=10)
+    r.raise_for_status()
+    files = r.json().get("files", {})
+    if GIST_FILENAME not in files:
+        return None
+    return json.loads(files[GIST_FILENAME]["content"])
+
+def _gist_write(gist_id, token, data):
+    """Schrijf de JSON terug naar de gist."""
+    import requests
+    headers = {"Authorization": f"Bearer {token}",
+               "Accept": "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    body = {"files": {GIST_FILENAME: {
+        "content": json.dumps(data, ensure_ascii=False, indent=2)
+    }}}
+    r = requests.patch(f"{GIST_API}/{gist_id}", headers=headers,
+                       json=body, timeout=15)
+    r.raise_for_status()
+
 def load_data():
+    gist_id, token = _gist_config()
+    if gist_id and token:
+        try:
+            d = _gist_fetch(gist_id, token)
+            if d is None:
+                # Gist bestaat maar bevat kza_data.json nog niet → seed
+                d = copy.deepcopy(INITIAL_DATA)
+                _gist_write(gist_id, token, d)
+                _gist_fetch.clear()
+            for key in INITIAL_DATA:
+                if key not in d:
+                    d[key] = copy.deepcopy(INITIAL_DATA[key])
+            return d
+        except Exception as e:
+            st.error(f"⚠️ Gist-opslag onbereikbaar ({e}). Val terug op lokaal bestand.")
+    # Lokale fallback
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             d = json.load(f)
@@ -196,6 +257,14 @@ def load_data():
     return data
 
 def _write(data):
+    gist_id, token = _gist_config()
+    if gist_id and token:
+        try:
+            _gist_write(gist_id, token, data)
+            _gist_fetch.clear()  # cache busten zodat volgende load vers leest
+            return
+        except Exception as e:
+            st.error(f"⚠️ Gist-write faalt ({e}). Val terug op lokaal bestand.")
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
@@ -215,9 +284,16 @@ with st.sidebar:
     )
     st.divider()
     if st.button("🔄 Vernieuwen", use_container_width=True, type="primary"):
+        _gist_fetch.clear()  # forceer verse data uit Gist
         st.rerun()
     auto_refresh = st.toggle("⚡ Auto-refresh (10 sec)", value=False)
     st.divider()
+    # Backend-indicator
+    _gid, _tok = _gist_config()
+    if _gid and _tok:
+        st.caption("☁️ Opslag: GitHub Gist")
+    else:
+        st.caption("💾 Opslag: lokaal bestand")
     if st.button("↺ Data resetten naar standaard", use_container_width=True):
         _write(copy.deepcopy(INITIAL_DATA))
         st.session_state.pop("confirm_reset", None)
