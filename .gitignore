@@ -1,0 +1,20 @@
+# Streamlit secrets — nooit committen
+.streamlit/secrets.toml
+
+# Test-backup
+kza_data.json.testbak
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

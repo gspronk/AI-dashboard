@@ -1,0 +1,490 @@
+{
+  "taken": [
+    {
+      "id": "1",
+      "nummer": "1.1",
+      "pijler": "PIJLER 1 – VERSPREIDING",
+      "subtaak": "Maandelijkse AI-updates & initiatieven",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Mei 2026",
+      "deadline": "Doorlopend (maandelijks)",
+      "beschrijving": "Maandelijkse communicatie over AI-initiatieven, updates en voortgang. Laat zien waar we mee bezig zijn om verspreiding van AI-gebruik binnen KZA te stimuleren.",
+      "status": "Gepland"
+    },
+    {
+      "id": "2",
+      "nummer": "1.2",
+      "pijler": "PIJLER 1 – VERSPREIDING",
+      "subtaak": "AI-tooling keuze & licentie-aanvraag",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "April 2026",
+      "deadline": "Eind mei 2026",
+      "beschrijving": "Selecteren van de AI-tooling waarvoor KZA-medewerkers een licentie kunnen aanvragen. Inclusief rollout, documentatie en aanvraagproces.",
+      "status": "Loopt"
+    },
+    {
+      "id": "3",
+      "nummer": "2.1",
+      "pijler": "PIJLER 2 – KENNISVERHOGING",
+      "subtaak": "AI Basiscursus strategie",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Mei 2026",
+      "deadline": "Eind juni 2026",
+      "beschrijving": "Basiscursus AI voor alle KZA-medewerkers — fundament van kennisverhoging. Bedoeld om iedereen een werkbaar startpunt te geven met AI-tools.",
+      "status": "Gepland"
+    },
+    {
+      "id": "4",
+      "nummer": "2.2",
+      "pijler": "PIJLER 2 – KENNISVERHOGING",
+      "subtaak": "AI Gevorderde Cursus (MCP, agents, skills)",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Juli 2026",
+      "deadline": "Eind september 2026",
+      "beschrijving": "Intern door Gerson ontwikkelde gevorderde cursus over MCP's, agents en skills. Vervolg op de basiscursus voor medewerkers die dieper willen.",
+      "status": "Gepland"
+    },
+    {
+      "id": "5",
+      "nummer": "2.3",
+      "pijler": "PIJLER 2 – KENNISVERHOGING",
+      "subtaak": "Kennisdeling TSS Public & TSS Blue",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Mei 2026",
+      "deadline": "Eind juli 2026",
+      "beschrijving": "Gesprekken met AI-leads van TSS Public en TSS Blue. Aansluiten bij hun initiatieven, kennis overnemen en samenwerking binnen de TS-groep versterken.",
+      "status": "Gepland"
+    },
+    {
+      "id": "6",
+      "nummer": "3.1",
+      "pijler": "PIJLER 3 – NIEUWE INITIATIEVEN",
+      "subtaak": "Templates & skills voor KZA-opdrachten",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Juni 2026",
+      "deadline": "Eind augustus 2026",
+      "beschrijving": "Ontwikkelen van herbruikbare skills, contextfiles en templates die KZA'ers direct kunnen gebruiken in opdrachten om snel productief te zijn met AI.",
+      "status": "Gepland"
+    },
+    {
+      "id": "7",
+      "nummer": "3.2",
+      "pijler": "PIJLER 3 – NIEUWE INITIATIEVEN",
+      "subtaak": "AI-doelen & strategie KZA",
+      "verantwoordelijke": "Gerson + Jan",
+      "startmaand": "April 2026",
+      "deadline": "Eind mei 2026",
+      "beschrijving": "Opstellen en vastleggen van de AI-doelen voor KZA: wat willen we bereiken, hoe meten we succes, welke randvoorwaarden gelden.",
+      "status": "Loopt"
+    },
+    {
+      "id": "8",
+      "nummer": "3.3",
+      "pijler": "PIJLER 3 – NIEUWE INITIATIEVEN",
+      "subtaak": "Vibecoding Workshop",
+      "verantwoordelijke": "Gerson + Joost Hopmans",
+      "startmaand": "Mei 2026",
+      "deadline": "Juni 2026",
+      "beschrijving": "Gewoon lekker een dagdeel of middag/avond gaan vibecoden zonder concreet doel en/of opdracht",
+      "status": "Gepland"
+    },
+    {
+      "id": "9",
+      "nummer": "2.4",
+      "pijler": "PIJLER 2 – KENNISVERHOGING",
+      "subtaak": "AI fundamentals en Prompt engineering",
+      "verantwoordelijke": "Nick + Tycho + Gerson",
+      "startmaand": "April 2026",
+      "deadline": "Juni 2026",
+      "beschrijving": "De fundamentals van AI uitleggen, wat het kan en hoe dat werkt. Daarnaast ook focus leggen op prompten",
+      "status": "Loopt"
+    },
+    {
+      "id": "10",
+      "nummer": "1.3",
+      "pijler": "PIJLER 1 – VERSPREIDING",
+      "subtaak": "Waardepropositie Testmate",
+      "verantwoordelijke": "Dougal + Ide",
+      "startmaand": "Maart 2026",
+      "deadline": "Eind mei ",
+      "beschrijving": "Een waardepropositie over hoe KZA AI kan gebruiken om extra waarde te kunnen leveren aan klanten in hun testproces",
+      "status": "Loopt"
+    },
+    {
+      "id": "11",
+      "nummer": "3.4",
+      "pijler": "PIJLER 3 – NIEUWE INITIATIEVEN",
+      "subtaak": "Aansluiten TSS Initiative ",
+      "verantwoordelijke": "Mark + Gerson",
+      "startmaand": "Mei",
+      "deadline": "Juni",
+      "beschrijving": "Aansluiten bij de TSS BLUE AI DLC workshop op 4/5 juni",
+      "status": "Loopt"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "m1",
+      "naam": "Fundament gelegd",
+      "datum": "Eind mei 2026",
+      "betrokkenen": "Gerson + management + Dougal",
+      "aandachtspunten": "AI-doelen vastgesteld? Tooling gekozen en licentie-proces live? Waardepropositie Testmate scherp?",
+      "afgerond": false
+    },
+    {
+      "id": "m2",
+      "naam": "Kennisopbouw van start",
+      "datum": "Eind juni 2026",
+      "betrokkenen": "Gerson + Dougal + Joost",
+      "aandachtspunten": "Basiscursus uitgerold? AI fundamentals & Prompt engineering gestart? Vibecoding Workshop gedraaid?",
+      "afgerond": false
+    },
+    {
+      "id": "m3",
+      "naam": "Externe samenwerking actief",
+      "datum": "Eind juli 2026",
+      "betrokkenen": "Gerson + TSS AI leads",
+      "aandachtspunten": "Gesprekken gevoerd met TSS Public & TSS Blue? Concrete samenwerking + kennisuitwisseling?",
+      "afgerond": false
+    },
+    {
+      "id": "m4",
+      "naam": "Templates productief",
+      "datum": "Eind augustus 2026",
+      "betrokkenen": "Gerson + 2-3 KZA'ers",
+      "aandachtspunten": "Templates & skills beschikbaar? Testgebruikers bevestigen bruikbaarheid in opdrachten?",
+      "afgerond": false
+    },
+    {
+      "id": "m5",
+      "naam": "Specialisatie gereed",
+      "datum": "Eind september 2026",
+      "betrokkenen": "Gerson + Joost",
+      "aandachtspunten": "Gevorderde Cursus (MCP, agents, skills) afgerond? Eerste cursisten certified?",
+      "afgerond": false
+    },
+    {
+      "id": "m6",
+      "naam": "Jaarafsluiting & evaluatie",
+      "datum": "Eind oktober 2026",
+      "betrokkenen": "Gerson + management",
+      "aandachtspunten": "KPI's op target? Maandelijkse updates cumulatief volgehouden? Strategische review + plan 2027?",
+      "afgerond": false
+    }
+  ],
+  "kpis": [
+    {
+      "id": "k1",
+      "naam": "AI-tooling licentie-aanvragen",
+      "target": "≥ 35",
+      "eenheid": "#",
+      "Mei": "3",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    },
+    {
+      "id": "k2",
+      "naam": "Medewerkers Basiscursus afgerond",
+      "target": "≥ 70%",
+      "eenheid": "%",
+      "Mei": "0",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    },
+    {
+      "id": "k3",
+      "naam": "Medewerkers Gevorderde cursus afgerond",
+      "target": "≥ 8",
+      "eenheid": "#",
+      "Mei": "0",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    },
+    {
+      "id": "k4",
+      "naam": "Maandelijkse AI-updates verstuurd",
+      "target": "≥ 5 van 6",
+      "eenheid": "#",
+      "Mei": "1",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    },
+    {
+      "id": "k5",
+      "naam": "Templates & skills gepubliceerd",
+      "target": "≥ 10",
+      "eenheid": "#",
+      "Mei": "4",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    },
+    {
+      "id": "k6",
+      "naam": "TS-samenwerking gesprekken gevoerd",
+      "target": "≥ 6",
+      "eenheid": "#",
+      "Mei": "2",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    },
+    {
+      "id": "k7",
+      "naam": "AI-doelen document status",
+      "target": "Afgerond",
+      "eenheid": "status",
+      "Mei": "Afgerond",
+      "Juni": "",
+      "Juli": "",
+      "Aug": "",
+      "Sep": "",
+      "Okt": ""
+    }
+  ],
+  "prioriteiten": [
+    {
+      "rang": 1,
+      "urgentie": "🔴 Nu",
+      "actie": "Leg AI-doelen & strategie KZA vast",
+      "pijler": "P3.2",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Eind mei 2026",
+      "impact": "⭐⭐⭐⭐⭐",
+      "reden": "Zonder duidelijke doelen geen richting voor de rest",
+      "status": "Loopt"
+    },
+    {
+      "rang": 2,
+      "urgentie": "🔴 Nu",
+      "actie": "AI-tooling keuze & licentie-aanvraag rollout",
+      "pijler": "P1.2",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Eind mei 2026",
+      "impact": "⭐⭐⭐⭐⭐",
+      "reden": "Medewerkers hebben direct tools nodig om te beginnen",
+      "status": "Loopt"
+    },
+    {
+      "rang": 3,
+      "urgentie": "🔴 Nu",
+      "actie": "Start maandelijkse AI-updates & initiatieven",
+      "pijler": "P1.1",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Doorlopend (maandelijks)",
+      "impact": "⭐⭐⭐⭐",
+      "reden": "Zichtbaarheid en momentum van AI-adoptie vasthouden",
+      "status": "Gepland"
+    },
+    {
+      "rang": 4,
+      "urgentie": "🔴 Nu",
+      "actie": "Rol AI Basiscursus uit",
+      "pijler": "P2.1",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Eind juni 2026",
+      "impact": "⭐⭐⭐⭐⭐",
+      "reden": "Fundament voor kennisverhoging bij alle medewerkers",
+      "status": "Gepland"
+    },
+    {
+      "rang": 5,
+      "urgentie": "🟡 Q3",
+      "actie": "Start kennisdeling TSS Public & TSS Blue",
+      "pijler": "P2.3",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Eind juli 2026",
+      "impact": "⭐⭐⭐⭐",
+      "reden": "Versnellen door bestaande TS-kennis te hergebruiken",
+      "status": "Gepland"
+    },
+    {
+      "rang": 6,
+      "urgentie": "🟡 Q3",
+      "actie": "Maak templates & skills voor opdrachten",
+      "pijler": "P3.1",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Eind augustus 2026",
+      "impact": "⭐⭐⭐⭐",
+      "reden": "Direct toepasbaar in klantwerk, versnelt project-kickoff",
+      "status": "Gepland"
+    },
+    {
+      "rang": 7,
+      "urgentie": "🟢 Q4",
+      "actie": "Ontwikkel AI Gevorderde Cursus (MCP, agents, skills)",
+      "pijler": "P2.2",
+      "verantwoordelijke": "Gerson",
+      "deadline": "Eind september 2026",
+      "impact": "⭐⭐⭐⭐",
+      "reden": "Verdieping voor medewerkers die volgende stap willen maken",
+      "status": "Gepland"
+    },
+    {
+      "rang": 8,
+      "urgentie": "🟡 Q3",
+      "actie": "Vibecoding Workshop",
+      "pijler": "P3.3",
+      "verantwoordelijke": "Gerson + Joost Hopmans",
+      "deadline": "Juni 2026",
+      "impact": "⭐⭐⭐",
+      "reden": "",
+      "status": "Gepland"
+    },
+    {
+      "rang": 9,
+      "urgentie": "🟡 Q3",
+      "actie": "AI fundamentals en Prompt engineering",
+      "pijler": "P2.4",
+      "verantwoordelijke": "Nick + Tycho + Gerson",
+      "deadline": "Juni 2026",
+      "impact": "⭐⭐⭐",
+      "reden": "",
+      "status": "Loopt"
+    },
+    {
+      "rang": 10,
+      "urgentie": "🟡 Q3",
+      "actie": "Waardepropositie Testmate",
+      "pijler": "P1.3",
+      "verantwoordelijke": "Dougal + Ide",
+      "deadline": "Eind mei ",
+      "impact": "⭐⭐⭐",
+      "reden": "",
+      "status": "Loopt"
+    },
+    {
+      "rang": 11,
+      "urgentie": "🟡 Q3",
+      "actie": "Aansluiten TSS Initiative ",
+      "pijler": "P3.4",
+      "verantwoordelijke": "Mark + Gerson",
+      "deadline": "Juni",
+      "impact": "⭐⭐⭐",
+      "reden": "",
+      "status": "Loopt"
+    }
+  ],
+  "waarde_medewerkers": [
+    {
+      "doel": "Maandelijkse AI-updates & initiatieven",
+      "waarde_mw": "Zichtbaarheid van AI-successen en inspiratie van collega's",
+      "resultaat_mw": "Meer betrokkenheid, gedeelde trots, lagere drempel om mee te doen",
+      "pijler": "P1.1"
+    },
+    {
+      "doel": "AI-tooling keuze & licentie-aanvraag",
+      "waarde_mw": "Toegang tot bewezen, veilige AI-tools via officiële licenties",
+      "resultaat_mw": "Direct aan de slag zonder gedoe over welke tool wel/niet mag",
+      "pijler": "P1.2"
+    },
+    {
+      "doel": "AI Basiscursus strategie",
+      "waarde_mw": "Basisvaardigheden en zelfvertrouwen met AI",
+      "resultaat_mw": "Kan zelf AI toepassen in dagelijks werk",
+      "pijler": "P2.1"
+    },
+    {
+      "doel": "AI Gevorderde Cursus (MCP, agents, skills)",
+      "waarde_mw": "Diepgaande kennis van MCP's, agents en skills",
+      "resultaat_mw": "Kan zelfstandig geavanceerde AI-oplossingen bouwen",
+      "pijler": "P2.2"
+    },
+    {
+      "doel": "Kennisdeling TSS Public & TSS Blue",
+      "waarde_mw": "Toegang tot breder TS-netwerk en bestaande kennis",
+      "resultaat_mw": "Sneller leren door ervaringen van anderen te hergebruiken",
+      "pijler": "P2.3"
+    },
+    {
+      "doel": "Templates & skills voor KZA-opdrachten",
+      "waarde_mw": "Directe hulp bij start van opdrachten",
+      "resultaat_mw": "Productief vanaf dag 1 van een project",
+      "pijler": "P3.1"
+    },
+    {
+      "doel": "AI-doelen & strategie KZA",
+      "waarde_mw": "Duidelijkheid over richting en verwachtingen",
+      "resultaat_mw": "Weet waar eigen bijdrage landt in het grotere geheel",
+      "pijler": "P3.2"
+    }
+  ],
+  "waarde_bedrijven": [
+    {
+      "doel": "Maandelijkse AI-updates & initiatieven",
+      "waarde_bdr": "Interne AI-cultuur en adoptie worden zichtbaar gemaakt",
+      "resultaat_bdr": "Hogere adoptiegraad, snellere organisatie-brede verankering",
+      "pijler": "P1.1"
+    },
+    {
+      "doel": "AI-tooling keuze & licentie-aanvraag",
+      "waarde_bdr": "Gestandaardiseerd, veilig AI-tooling landschap",
+      "resultaat_bdr": "Minder shadow-IT risico, beter kostenbeheer",
+      "pijler": "P1.2"
+    },
+    {
+      "doel": "AI Basiscursus strategie",
+      "waarde_bdr": "Organisatiebrede AI-geletterdheid",
+      "resultaat_bdr": "Bredere basis voor innovatie, lagere drempel voor adoptie",
+      "pijler": "P2.1"
+    },
+    {
+      "doel": "AI Gevorderde Cursus (MCP, agents, skills)",
+      "waarde_bdr": "Specialistische AI-capaciteit in huis",
+      "resultaat_bdr": "KZA kan zelf geavanceerde oplossingen leveren aan klanten",
+      "pijler": "P2.2"
+    },
+    {
+      "doel": "Kennisdeling TSS Public & TSS Blue",
+      "waarde_bdr": "Schaalvoordeel door samenwerking binnen TSS-groep",
+      "resultaat_bdr": "Minder dubbel werk, snellere time-to-value op AI-initiatieven",
+      "pijler": "P2.3"
+    },
+    {
+      "doel": "Templates & skills voor KZA-opdrachten",
+      "waarde_bdr": "Herbruikbare AI-bouwstenen voor klantopdrachten",
+      "resultaat_bdr": "Snellere project-kickoffs, hogere consistentie in klantwerk",
+      "pijler": "P3.1"
+    },
+    {
+      "doel": "AI-doelen & strategie KZA",
+      "waarde_bdr": "Strategische richting en meetbare doelen voor AI",
+      "resultaat_bdr": "Gerichte investeringen, toetsbare voortgang",
+      "pijler": "P3.2"
+    },
+    {
+      "doel": "Vibecoding Workshop",
+      "waarde_bdr": "",
+      "resultaat_bdr": "",
+      "pijler": "P3.3"
+    },
+    {
+      "doel": "AI fundamentals en Prompt engineering",
+      "waarde_bdr": "",
+      "resultaat_bdr": "",
+      "pijler": "P2.4"
+    },
+    {
+      "doel": "Waardepropositie Testmate",
+      "waarde_bdr": "",
+      "resultaat_bdr": "",
+      "pijler": "P1.3"
+    }
+  ]
+}
