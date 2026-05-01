@@ -283,6 +283,8 @@ try:
          "bad_json" in dash_src)
     test("dashboard stopt expliciet bij gist-config-fouten",
          "st.stop()" in dash_src)
+    test("gevaarlijke 'Data resetten naar standaard' knop is verwijderd",
+         "Data resetten" not in dash_src)
     test("Vernieuwen-knop bust Gist-cache",
          "_gist_fetch.clear()" in dash_src)
     test("sidebar toont actieve opslag-backend",

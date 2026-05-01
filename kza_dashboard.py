@@ -333,10 +333,6 @@ with st.sidebar:
         st.caption("☁️ Opslag: GitHub Gist")
     else:
         st.caption("💾 Opslag: lokaal bestand")
-    if st.button("↺ Data resetten naar standaard", use_container_width=True):
-        _write(copy.deepcopy(INITIAL_DATA))
-        st.session_state.pop("confirm_reset", None)
-        st.rerun()
 
 data = load_data()
 
