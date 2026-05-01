@@ -203,7 +203,13 @@ def _gist_config():
 
 @st.cache_data(ttl=30, show_spinner=False)
 def _gist_fetch(gist_id, token):
-    """Haal de JSON op uit de gist (gecached, 30s TTL)."""
+    """Haal de JSON op uit de gist (gecached, 30s TTL).
+    Retourneert een tuple (status, payload):
+      ('ok', dict)               – succes
+      ('empty', None)            – gist heeft geen files
+      ('wrong_file', [filenames]) – gist heeft files maar geen kza_data.json
+      ('bad_json', error_string) – kza_data.json bestaat maar is geen geldige JSON
+    """
     import requests
     headers = {"Authorization": f"Bearer {token}",
                "Accept": "application/vnd.github+json",
@@ -211,9 +217,14 @@ def _gist_fetch(gist_id, token):
     r = requests.get(f"{GIST_API}/{gist_id}", headers=headers, timeout=10)
     r.raise_for_status()
     files = r.json().get("files", {})
+    if not files:
+        return ("empty", None)
     if GIST_FILENAME not in files:
-        return None
-    return json.loads(files[GIST_FILENAME]["content"])
+        return ("wrong_file", list(files.keys()))
+    try:
+        return ("ok", json.loads(files[GIST_FILENAME]["content"]))
+    except json.JSONDecodeError as e:
+        return ("bad_json", str(e))
 
 def _gist_write(gist_id, token, data):
     """Schrijf de JSON terug naar de gist."""
@@ -232,18 +243,46 @@ def load_data():
     gist_id, token = _gist_config()
     if gist_id and token:
         try:
-            d = _gist_fetch(gist_id, token)
-            if d is None:
-                # Gist bestaat maar bevat kza_data.json nog niet → seed
-                d = copy.deepcopy(INITIAL_DATA)
-                _gist_write(gist_id, token, d)
-                _gist_fetch.clear()
-            for key in INITIAL_DATA:
-                if key not in d:
-                    d[key] = copy.deepcopy(INITIAL_DATA[key])
-            return d
+            status, payload = _gist_fetch(gist_id, token)
         except Exception as e:
-            st.error(f"⚠️ Gist-opslag onbereikbaar ({e}). Val terug op lokaal bestand.")
+            st.error(f"⚠️ Gist onbereikbaar ({e}). Val terug op lokaal bestand.")
+        else:
+            if status == "ok":
+                d = payload
+                for key in INITIAL_DATA:
+                    if key not in d:
+                        d[key] = copy.deepcopy(INITIAL_DATA[key])
+                return d
+            if status == "empty":
+                st.error(
+                    "⚠️ De gist is leeg. Maak in de gist handmatig een bestand "
+                    f"`{GIST_FILENAME}` aan met geldige JSON-inhoud en klik "
+                    "vervolgens op '🔄 Vernieuwen' in de sidebar.\n\n"
+                    "*Het dashboard schrijft uit voorzorg geen default-data "
+                    "naar je gist — dat zou bestaande data kunnen overschrijven.*"
+                )
+                st.stop()
+            if status == "wrong_file":
+                gevonden = ", ".join(f"`{f}`" for f in payload)
+                st.error(
+                    f"⚠️ De gist bevat geen bestand met de naam `{GIST_FILENAME}`. "
+                    f"Gevonden in deze gist: {gevonden}.\n\n"
+                    f"**Oplossing:** open je gist op gist.github.com, klik op "
+                    f"'Edit' en hernoem het bestaande bestand naar exact "
+                    f"`{GIST_FILENAME}` (let op hoofdletters/underscore). "
+                    f"Klik daarna op '🔄 Vernieuwen' in de sidebar.\n\n"
+                    f"*Uit voorzorg schrijft het dashboard nu géén data naar "
+                    f"je gist — anders zou bestaande data overschreven worden.*"
+                )
+                st.stop()
+            if status == "bad_json":
+                st.error(
+                    f"⚠️ Bestand `{GIST_FILENAME}` in de gist is geen geldige "
+                    f"JSON: {payload}. Open de gist en herstel de inhoud, "
+                    "of gebruik 'Revisions' op gist.github.com om naar een "
+                    "eerdere versie terug te gaan."
+                )
+                st.stop()
     # Lokale fallback
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:

@@ -270,6 +270,19 @@ try:
          '_gist_config()' in dash_src and 'load_data' in dash_src)
     test("_write valt terug op lokaal bestand bij Gist-fout",
          "Val terug op lokaal bestand" in dash_src)
+    # Bug-fix: geen destructieve auto-seed naar gist
+    test("_gist_fetch retourneert (status, payload) tuple",
+         "('ok'," in dash_src and "'wrong_file'" in dash_src and "'empty'" in dash_src)
+    test("load_data schrijft NIET automatisch naar gist bij missende file",
+         "_gist_write(gist_id, token, d)" not in dash_src.split("def _write")[0])
+    test("dashboard waarschuwt bij verkeerde bestandsnaam in gist",
+         "wrong_file" in dash_src and "hernoem" in dash_src.lower())
+    test("dashboard waarschuwt bij lege gist",
+         '"empty"' in dash_src and "leeg" in dash_src)
+    test("dashboard handelt corrupte JSON in gist af",
+         "bad_json" in dash_src)
+    test("dashboard stopt expliciet bij gist-config-fouten",
+         "st.stop()" in dash_src)
     test("Vernieuwen-knop bust Gist-cache",
          "_gist_fetch.clear()" in dash_src)
     test("sidebar toont actieve opslag-backend",
