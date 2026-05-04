@@ -285,6 +285,11 @@ try:
          "st.stop()" in dash_src)
     test("gevaarlijke 'Data resetten naar standaard' knop is verwijderd",
          "Data resetten" not in dash_src)
+    # Waardepropositie: rij verwijderen mogelijk
+    test("waardepropositie medewerkers heeft num_rows='dynamic'",
+         dash_src.count('num_rows="dynamic"') >= 2)
+    test("waardepropositie save filtert lege rijen",
+         "rij zonder Doel overslaan" in dash_src)
     test("Vernieuwen-knop bust Gist-cache",
          "_gist_fetch.clear()" in dash_src)
     test("sidebar toont actieve opslag-backend",
@@ -307,6 +312,54 @@ try:
          'data["milestones"][i]["betrokkenen"] = e_betrok' in dash_src)
     test("milestones bewerken slaat aandachtspunten op",
          'data["milestones"][i]["aandachtspunten"] = e_punten' in dash_src)
+
+    # Strategische doelen: nieuwe pagina + datastructuur
+    test("INITIAL_DATA bevat sleutel 'strategische_doelen'",
+         '"strategische_doelen": []' in dash_src or
+         "'strategische_doelen': []" in dash_src)
+    test("sidebar bevat menu-item Strategische doelen",
+         "🧭 Strategische doelen" in dash_src)
+    test("dashboard heeft pagina-handler voor Strategische doelen",
+         'page == "🧭 Strategische doelen"' in dash_src)
+    test("Strategische doelen heeft tab Overzicht & bewerken",
+         '📄 Overzicht & bewerken' in dash_src)
+    test("Strategische doelen heeft tab Nieuw doel",
+         '➕ Nieuw doel' in dash_src)
+    test("Strategische doelen heeft bewerk-formulier",
+         'st.form(f"edit_sd_' in dash_src)
+    test("Strategische doelen heeft toevoeg-formulier",
+         'st.form("new_sd")' in dash_src)
+    test("Strategische doelen slaat naam op",
+         'data["strategische_doelen"][i]["naam"]' in dash_src)
+    test("Strategische doelen slaat omschrijving op",
+         'data["strategische_doelen"][i]["omschrijving"]' in dash_src)
+    test("Strategische doelen slaat eigenaar op",
+         'data["strategische_doelen"][i]["eigenaar"]' in dash_src)
+    test("Strategische doelen slaat deadline op",
+         'data["strategische_doelen"][i]["deadline"]' in dash_src)
+    test("Strategische doelen slaat status op",
+         'data["strategische_doelen"][i]["status"]' in dash_src)
+    test("Strategische doelen slaat succescriteria op",
+         'data["strategische_doelen"][i]["succescriteria"]' in dash_src)
+    test("Strategische doelen ondersteunt verwijderen",
+         'data["strategische_doelen"].pop(i)' in dash_src)
+    test("Strategische doelen ondersteunt toevoegen",
+         'data["strategische_doelen"].append(' in dash_src)
+    test("Strategische doelen vult ontbrekende sleutel forward-compat",
+         'if "strategische_doelen" not in data' in dash_src)
+    test("Strategische doelen blokkeert lege naam bij toevoegen",
+         "Vul minimaal de naam in" in dash_src)
+
+    # Productie-data: strategische_doelen sleutel moet bestaan (mag leeg zijn)
+    if "strategische_doelen" in prod:
+        for sd in prod.get("strategische_doelen", []):
+            sd_id = sd.get("id", "?")
+            for v in ("id", "naam", "omschrijving", "eigenaar",
+                      "deadline", "status", "succescriteria"):
+                test(f"strategisch doel {sd_id} heeft veld '{v}'", v in sd)
+            test(f"strategisch doel {sd_id} heeft geldige status",
+                 sd.get("status") in STATUS_OK,
+                 f"ongeldige status: {sd.get('status')}")
 
     # Productie-data: milestones moeten 6 stuks zijn en juiste ids hebben
     verwachte_ms_ids = {"m1", "m2", "m3", "m4", "m5", "m6"}

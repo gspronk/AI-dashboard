@@ -122,7 +122,8 @@ INITIAL_DATA = {
         {"doel":"External Knowledge Integration","waarde_bdr":"Toegang tot nieuwste AI-inzichten","resultaat_bdr":"Toekomstbestendige propositie, thought leadership","pijler":"P2.4"},
         {"doel":"Pilot-projecten alle teams","waarde_bdr":"Bewijs van innovatievermogen KZA","resultaat_bdr":"Concrete cases voor marketing & sales","pijler":"P1.3"},
         {"doel":"Innovation Lab","waarde_bdr":"Co-innovatie mogelijkheden met klanten","resultaat_bdr":"Nieuwe businessmodellen, partnership kansen","pijler":"P3.4"},
-    ]
+    ],
+    "strategische_doelen": []
 }
 
 STATUS_OPTIONS = ["Gepland", "Loopt", "Klaar", "Vertraagd"]
@@ -318,7 +319,7 @@ with st.sidebar:
     st.divider()
     page = st.radio(
         "Navigatie",
-        ["🏠 Dashboard", "📋 Taken", "🎯 Milestones", "📈 KPI's", "🏆 Prioriteiten", "💡 Waardepropositie"],
+        ["🏠 Dashboard", "📋 Taken", "🎯 Milestones", "📈 KPI's", "🏆 Prioriteiten", "💡 Waardepropositie", "🧭 Strategische doelen"],
         label_visibility="hidden"
     )
     st.divider()
@@ -850,8 +851,10 @@ elif page == "💡 Waardepropositie":
             st.subheader("Waarde voor medewerkers")
             df_mw = pd.DataFrame(data["waarde_medewerkers"] or [],
                                  columns=list(MW_COLS.keys())).rename(columns=MW_COLS)
+            st.caption("Tip: selecteer rijen links en druk op de prullenbak om te verwijderen, of klik op de + onderaan om toe te voegen.")
             edited_mw = st.data_editor(
                 df_mw, use_container_width=True, hide_index=True,
+                num_rows="dynamic",
                 column_config={
                     "Doel": st.column_config.SelectboxColumn(
                         options=taak_subtaken(data["taken"]), width="large"),
@@ -863,11 +866,20 @@ elif page == "💡 Waardepropositie":
                 key="mw_editor"
             )
             if st.button("💾 Opslaan", type="primary", key="save_mw"):
-                data["waarde_medewerkers"] = [
-                    {"doel": row["Doel"], "waarde_mw": row["Wat levert het de medewerker op?"],
-                     "resultaat_mw": row["Concreet resultaat"], "pijler": row["Pijler"]}
-                    for _, row in edited_mw.iterrows()
-                ]
+                rows = []
+                for _, row in edited_mw.iterrows():
+                    doel = "" if pd.isna(row["Doel"]) else str(row["Doel"])
+                    if not doel.strip():
+                        continue  # rij zonder Doel overslaan
+                    rows.append({
+                        "doel": doel,
+                        "waarde_mw": "" if pd.isna(row["Wat levert het de medewerker op?"])
+                                     else str(row["Wat levert het de medewerker op?"]),
+                        "resultaat_mw": "" if pd.isna(row["Concreet resultaat"])
+                                        else str(row["Concreet resultaat"]),
+                        "pijler": "" if pd.isna(row["Pijler"]) else str(row["Pijler"]),
+                    })
+                data["waarde_medewerkers"] = rows
                 save(data)
                 st.rerun()
         with subtab_mw2:
@@ -897,8 +909,10 @@ elif page == "💡 Waardepropositie":
             st.subheader("Waarde voor bedrijven / klanten")
             df_bdr = pd.DataFrame(data["waarde_bedrijven"] or [],
                                   columns=list(BDR_COLS.keys())).rename(columns=BDR_COLS)
+            st.caption("Tip: selecteer rijen links en druk op de prullenbak om te verwijderen, of klik op de + onderaan om toe te voegen.")
             edited_bdr = st.data_editor(
                 df_bdr, use_container_width=True, hide_index=True,
+                num_rows="dynamic",
                 column_config={
                     "Doel": st.column_config.SelectboxColumn(
                         options=taak_subtaken(data["taken"]), width="large"),
@@ -910,11 +924,20 @@ elif page == "💡 Waardepropositie":
                 key="bdr_editor"
             )
             if st.button("💾 Opslaan", type="primary", key="save_bdr"):
-                data["waarde_bedrijven"] = [
-                    {"doel": row["Doel"], "waarde_bdr": row["Wat levert het het bedrijf op?"],
-                     "resultaat_bdr": row["Concreet resultaat"], "pijler": row["Pijler"]}
-                    for _, row in edited_bdr.iterrows()
-                ]
+                rows = []
+                for _, row in edited_bdr.iterrows():
+                    doel = "" if pd.isna(row["Doel"]) else str(row["Doel"])
+                    if not doel.strip():
+                        continue  # rij zonder Doel overslaan
+                    rows.append({
+                        "doel": doel,
+                        "waarde_bdr": "" if pd.isna(row["Wat levert het het bedrijf op?"])
+                                      else str(row["Wat levert het het bedrijf op?"]),
+                        "resultaat_bdr": "" if pd.isna(row["Concreet resultaat"])
+                                         else str(row["Concreet resultaat"]),
+                        "pijler": "" if pd.isna(row["Pijler"]) else str(row["Pijler"]),
+                    })
+                data["waarde_bedrijven"] = rows
                 save(data)
                 st.rerun()
         with subtab_bdr2:
@@ -934,4 +957,164 @@ elif page == "💡 Waardepropositie":
                         "resultaat_bdr": bdr_resultaat, "pijler": bdr_pijler
                     })
                     save(data)
+                    st.rerun()
+
+# ═══════════════════════════════════════════════════════════════
+# PAGE: STRATEGISCHE DOELEN
+# ═══════════════════════════════════════════════════════════════
+elif page == "🧭 Strategische doelen":
+    st.title("🧭 Strategische doelen")
+    st.caption(
+        "Overkoepelende doelen van de KZA AI-strategie. Per doel: naam, "
+        "omschrijving, eigenaar, deadline, status en succescriteria."
+    )
+
+    # forward-compat: zorg dat de sleutel bestaat in oude data
+    if "strategische_doelen" not in data:
+        data["strategische_doelen"] = []
+
+    STATUS_ICON = {"Gepland": "📋", "Loopt": "🔄", "Klaar": "✅", "Vertraagd": "⚠️"}
+
+    tab_overzicht, tab_nieuw = st.tabs(
+        ["📄 Overzicht & bewerken", "➕ Nieuw doel"]
+    )
+
+    with tab_overzicht:
+        if not data["strategische_doelen"]:
+            st.info(
+                "Nog geen strategische doelen. Voeg er een toe via het tabblad "
+                "**➕ Nieuw doel**."
+            )
+        else:
+            st.caption(
+                "Klik op een doel om de details uit te klappen en te bewerken. "
+                "Tip: 4–6 strategische doelen werkt het best."
+            )
+            for i, doel in enumerate(data["strategische_doelen"]):
+                icon = STATUS_ICON.get(doel.get("status", "Gepland"), "📋")
+                eig = doel.get("eigenaar", "") or "—"
+                ddl = doel.get("deadline", "") or "—"
+                titel = (
+                    f"{icon} **{doel.get('naam', '(naamloos)')}**"
+                    f"  —  👤 {eig}"
+                    f"  —  📅 {ddl}"
+                )
+                with st.expander(titel, expanded=False):
+                    with st.form(f"edit_sd_{doel['id']}"):
+                        e_naam = st.text_input(
+                            "Naam doel *", value=doel.get("naam", ""),
+                            key=f"sd_n_{doel['id']}"
+                        )
+                        e_omschr = st.text_area(
+                            "Omschrijving", value=doel.get("omschrijving", ""),
+                            height=100, key=f"sd_o_{doel['id']}"
+                        )
+                        c1, c2, c3 = st.columns(3)
+                        with c1:
+                            e_eig = st.text_input(
+                                "Eigenaar", value=doel.get("eigenaar", ""),
+                                key=f"sd_e_{doel['id']}"
+                            )
+                        with c2:
+                            e_ddl = st.text_input(
+                                "Deadline", value=doel.get("deadline", ""),
+                                key=f"sd_d_{doel['id']}",
+                                help="Bijv. 'Eind juni 2026' of '2026-06-30'"
+                            )
+                        with c3:
+                            cur_status = doel.get("status", "Gepland")
+                            if cur_status not in STATUS_OPTIONS:
+                                cur_status = "Gepland"
+                            e_status = st.selectbox(
+                                "Status", STATUS_OPTIONS,
+                                index=STATUS_OPTIONS.index(cur_status),
+                                key=f"sd_s_{doel['id']}"
+                            )
+                        e_crit = st.text_area(
+                            "Succescriteria",
+                            value=doel.get("succescriteria", ""),
+                            height=100, key=f"sd_c_{doel['id']}",
+                            help="Hoe weet je wanneer dit doel behaald is?"
+                        )
+
+                        b1, b2 = st.columns([3, 1])
+                        with b1:
+                            opslaan = st.form_submit_button(
+                                "💾 Opslaan", type="primary"
+                            )
+                        with b2:
+                            verwijder = st.form_submit_button(
+                                "🗑️ Verwijder",
+                                help="Definitief verwijderen"
+                            )
+
+                        if opslaan:
+                            if not e_naam.strip():
+                                st.error("Naam mag niet leeg zijn.")
+                            else:
+                                data["strategische_doelen"][i]["naam"] = e_naam.strip()
+                                data["strategische_doelen"][i]["omschrijving"] = e_omschr
+                                data["strategische_doelen"][i]["eigenaar"] = e_eig
+                                data["strategische_doelen"][i]["deadline"] = e_ddl
+                                data["strategische_doelen"][i]["status"] = e_status
+                                data["strategische_doelen"][i]["succescriteria"] = e_crit
+                                save(data, msg=f"✅ Doel '{e_naam}' opgeslagen")
+                                st.rerun()
+                        if verwijder:
+                            data["strategische_doelen"].pop(i)
+                            save(data, msg="🗑️ Doel verwijderd")
+                            st.rerun()
+
+            # Compact statusoverzicht onder de expanders
+            st.divider()
+            st.markdown("#### 📊 Status-overzicht")
+            stat_rows = []
+            for d in data["strategische_doelen"]:
+                stat_rows.append({
+                    "Doel": d.get("naam", ""),
+                    "Eigenaar": d.get("eigenaar", "") or "—",
+                    "Deadline": d.get("deadline", "") or "—",
+                    "Status": (
+                        f"{STATUS_ICON.get(d.get('status', 'Gepland'), '📋')} "
+                        f"{d.get('status', 'Gepland')}"
+                    ),
+                })
+            st.dataframe(
+                pd.DataFrame(stat_rows),
+                hide_index=True, use_container_width=True
+            )
+
+    with tab_nieuw:
+        with st.form("new_sd"):
+            st.subheader("Nieuw strategisch doel toevoegen")
+            sd_naam = st.text_input("Naam doel *")
+            sd_omschr = st.text_area("Omschrijving", height=100)
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                sd_eig = st.text_input("Eigenaar")
+            with c2:
+                sd_ddl = st.text_input(
+                    "Deadline",
+                    help="Bijv. 'Eind juni 2026' of '2026-06-30'"
+                )
+            with c3:
+                sd_status = st.selectbox("Status", STATUS_OPTIONS, index=0)
+            sd_crit = st.text_area(
+                "Succescriteria", height=100,
+                help="Hoe weet je wanneer dit doel behaald is?"
+            )
+            if st.form_submit_button("➕ Toevoegen", type="primary"):
+                if not sd_naam.strip():
+                    st.error("Vul minimaal de naam in.")
+                else:
+                    data["strategische_doelen"].append({
+                        "id": str(uuid.uuid4())[:8],
+                        "naam": sd_naam.strip(),
+                        "omschrijving": sd_omschr,
+                        "eigenaar": sd_eig,
+                        "deadline": sd_ddl,
+                        "status": sd_status,
+                        "succescriteria": sd_crit,
+                    })
+                    save(data, msg=f"✅ Doel '{sd_naam}' toegevoegd")
                     st.rerun()
