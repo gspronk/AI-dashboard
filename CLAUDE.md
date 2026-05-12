@@ -14,7 +14,7 @@ Dit is het projectbestand voor het KZA Doelen AI dashboard. Volg deze regels bij
 
 ## Datastructuur kza_data.json
 
-Sleutels: `taken`, `milestones`, `kpis`, `prioriteiten`, `waarde_medewerkers`, `waarde_bedrijven`
+Sleutels: `taken`, `milestones`, `kpis`, `prioriteiten`, `waarde_medewerkers`, `waarde_bedrijven`, `strategische_doelen`
 
 Geldige statuswaarden voor taken en prioriteiten: `Gepland` | `Loopt` | `Klaar` | `Vertraagd`
 
@@ -64,10 +64,16 @@ De gebruiker slaat tussendoor zelf data op via het Streamlit dashboard (omschrij
    - Nieuw veld in `kza_data.json`
    - Bugfix (schrijf een regressietest die de bug reproduceert)
 
-4. **Schrijf bestanden via bash** (`cat > bestand << 'EOF'`), niet via de Write-tool — die kan bestanden afkappen bij grote inhoud.
+4. **Schrijf grote bestanden via PowerShell**, niet via de Write-tool — die kan bestanden afkappen. Gebruik voor bestanden groter dan ~100 regels:
+   ```powershell
+   [System.IO.File]::WriteAllText($pad, $inhoud, [System.Text.Encoding]::UTF8)
+   ```
+
+## Werkwijze voor git
+
+Gebruik **geen git worktrees** voor dit project. Dit is een single-user dashboard; worktrees voegen geen waarde toe en stapelen alleen op. Werk direct op `main` of maak een gewone branch.
 
 ## Bekende valkuilen
 
-- `pd.DataFrame([])` geeft een lege DataFrame zonder kolommen — gebruik altijd `columns=` mee bij aanmaken, of `.rename(columns=...)` na aanmaken met expliciete kolommen.
+- `pd.DataFrame([])` geeft een lege DataFrame zonder kolommen — als je kolommen verwacht, geef altijd `columns=` mee bij aanmaken, of gebruik `.rename(columns=...)` na aanmaken.
 - Streamlit laadt `kza_data.json` bij elke page-load. Na een CLI-update: gebruik de Vernieuwen-knop of F5 in de browser.
-- De Write-tool kan grote bestanden afkappen. Gebruik bash voor bestanden groter dan ~100 regels.
