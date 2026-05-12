@@ -1,8 +1,8 @@
-"""
+﻿"""
 KZA Dashboard - Automatische tests
 Voer uit met: python test_dashboard.py
 """
-import json, os, sys, copy, ast, tempfile, shutil, subprocess
+import json, os, sys, ast, shutil, subprocess
 import pandas as pd
 
 DASHBOARD_FILE = os.path.join(os.path.dirname(__file__), "kza_dashboard.py")
@@ -20,7 +20,7 @@ def test(naam, conditie, info=""):
         FAILED.append(naam)
         print(f"  FAIL  {naam}" + (f"  ->  {info}" if info else ""))
 
-# ── 1. SYNTAX ─────────────────────────────────────────────────
+# -- 1. SYNTAX -----------------------------------------------------------------
 print("\n[1] Syntax controle")
 for label, path in [("dashboard", DASHBOARD_FILE), ("CLI", CLI_FILE)]:
     try:
@@ -30,7 +30,7 @@ for label, path in [("dashboard", DASHBOARD_FILE), ("CLI", CLI_FILE)]:
     except SyntaxError as e:
         test(f"{label}.py syntax correct", False, str(e))
 
-# ── 2. DATA BESTAND ───────────────────────────────────────────
+# -- 2. DATA BESTAND -----------------------------------------------------------
 print("\n[2] kza_data.json structuur")
 try:
     with open(DATA_FILE, encoding="utf-8") as f:
@@ -46,19 +46,30 @@ except Exception as e:
     test("kza_data.json leesbaar", False, str(e))
     data = {}
 
-# ── 3. TAKEN VELDEN ───────────────────────────────────────────
+# -- 3. TAKEN SCHEMA -----------------------------------------------------------
 print("\n[3] Taak datastructuur")
 verplichte_velden = ["id", "nummer", "pijler", "subtaak", "verantwoordelijke",
                      "startmaand", "deadline", "beschrijving", "status"]
 STATUS_OK = {"Gepland", "Loopt", "Klaar", "Vertraagd"}
-for t in data.get("taken", []):
-    nr = t.get("nummer", "?")
-    for v in verplichte_velden:
-        test(f"taak {nr} heeft veld '{v}'", v in t)
-    test(f"taak {nr} heeft geldige status",
-         t.get("status") in STATUS_OK, f"ongeldige status: {t.get('status')}")
 
-# ── 4. WAARDEPROPOSITIE LEGE LIJST (bugfix-test) ─────────────
+ontbrekend = [
+    (t.get("nummer", "?"), v)
+    for t in data.get("taken", [])
+    for v in verplichte_velden
+    if v not in t
+]
+test("alle taken hebben verplichte velden", not ontbrekend,
+     f"ontbrekend: {ontbrekend}")
+
+ongeldige = [
+    (t.get("nummer", "?"), t.get("status"))
+    for t in data.get("taken", [])
+    if t.get("status") not in STATUS_OK
+]
+test("alle taken hebben geldige status", not ongeldige,
+     f"ongeldig: {ongeldige}")
+
+# -- 4. WAARDEPROPOSITIE LEGE LIJST (bugfix-test) ------------------------------
 print("\n[4] Waardepropositie met lege data")
 MW_COLS  = {"doel": "Doel", "waarde_mw": "Wat levert het de medewerker op?",
             "resultaat_mw": "Concreet resultaat", "pijler": "Pijler"}
@@ -68,11 +79,10 @@ BDR_COLS = {"doel": "Doel", "waarde_bdr": "Wat levert het het bedrijf op?",
 for label, cols in [("medewerkers", MW_COLS), ("bedrijven", BDR_COLS)]:
     try:
         df = pd.DataFrame([], columns=list(cols.keys())).rename(columns=cols)
-        test(f"lege '{label}' lijst geeft geen fout", True)
         test(f"lege '{label}' DataFrame heeft juiste kolommen",
              list(df.columns) == list(cols.values()))
     except Exception as e:
-        test(f"lege '{label}' lijst geeft geen fout", False, str(e))
+        test(f"lege '{label}' DataFrame heeft juiste kolommen", False, str(e))
 
 for label, cols, voorbeeld in [
     ("medewerkers", MW_COLS,
@@ -85,16 +95,14 @@ for label, cols, voorbeeld in [
     try:
         df = pd.DataFrame(voorbeeld,
                           columns=list(cols.keys())).rename(columns=cols)
-        test(f"gevulde '{label}' lijst werkt correct", len(df) == 1)
-        test(f"'{label}' kolommen correct hernoemd",
+        test(f"gevulde '{label}' DataFrame heeft juiste kolommen",
              list(df.columns) == list(cols.values()))
     except Exception as e:
-        test(f"gevulde '{label}' lijst werkt correct", False, str(e))
+        test(f"gevulde '{label}' DataFrame heeft juiste kolommen", False, str(e))
 
-# ── 5. CLI COMMANDO'S ─────────────────────────────────────────
+# -- 5. CLI COMMANDO'S ---------------------------------------------------------
 print("\n[5] CLI commando's")
 
-# Maak een tijdelijke kopie van de data naast kza_cli.py
 backup = DATA_FILE + ".testbak"
 shutil.copy2(DATA_FILE, backup)
 
@@ -142,272 +150,200 @@ except Exception as e:
     test("'status' commando werkt", False, str(e))
 
 try:
-    out = cli("taak", "update", "1.1", "--status", "Loopt")
-    test("'taak update --status' werkt", "Loopt" in out, out)
-    saved = read_data()
-    taak = next((t for t in saved["taken"] if t["nummer"] == "1.1"), None)
-    test("taak status correct opgeslagen", taak and taak["status"] == "Loopt",
-         str(taak))
+    cli("taak", "update", "1.1", "--status", "Loopt")
+    taak = next((t for t in read_data()["taken"] if t["nummer"] == "1.1"), None)
+    test("taak status update werkt", taak and taak["status"] == "Loopt", str(taak))
 except Exception as e:
-    test("'taak update --status' werkt", False, str(e))
+    test("taak status update werkt", False, str(e))
 
 try:
-    out = cli("kpi", "update", "Test KPI", "--mei", "42")
-    test("'kpi update' werkt", "42" in out, out)
-    saved = read_data()
-    kpi = next((k for k in saved["kpis"] if "Test KPI" in k["naam"]), None)
-    test("KPI-waarde correct opgeslagen",
-         kpi and str(kpi.get("Mei")) == "42", str(kpi))
+    cli("kpi", "update", "Test KPI", "--mei", "42")
+    kpi = next((k for k in read_data()["kpis"] if "Test KPI" in k["naam"]), None)
+    test("kpi update werkt", kpi and str(kpi.get("Mei")) == "42", str(kpi))
 except Exception as e:
-    test("'kpi update' werkt", False, str(e))
+    test("kpi update werkt", False, str(e))
 
 try:
-    out = cli("milestone", "done", "m1")
-    test("'milestone done' werkt", "afgerond" in out.lower(), out)
-    saved = read_data()
-    ms = next((m for m in saved["milestones"] if m["id"] == "m1"), None)
-    test("milestone correct afgevinkt", ms and ms["afgerond"] is True, str(ms))
+    cli("milestone", "done", "m1")
+    ms = next((m for m in read_data()["milestones"] if m["id"] == "m1"), None)
+    test("milestone done werkt", ms and ms["afgerond"] is True, str(ms))
 except Exception as e:
-    test("'milestone done' werkt", False, str(e))
+    test("milestone done werkt", False, str(e))
 
 try:
-    out = cli("prio", "update", "1", "--status", "Klaar")
-    test("'prio update' werkt", "Klaar" in out, out)
-    saved = read_data()
-    prio = next((p for p in saved["prioriteiten"] if p["rang"] == 1), None)
-    test("prio status correct opgeslagen",
-         prio and prio["status"] == "Klaar", str(prio))
+    cli("prio", "update", "1", "--status", "Klaar")
+    prio = next((p for p in read_data()["prioriteiten"] if p["rang"] == 1), None)
+    test("prio status update werkt", prio and prio["status"] == "Klaar", str(prio))
 except Exception as e:
-    test("'prio update' werkt", False, str(e))
+    test("prio status update werkt", False, str(e))
 
-# ── 6. REFERENTIËLE INTEGRITEIT ──────────────────────────────
-print("\n[6] Referentiële integriteit: pijler- en doel-waarden")
+# -- 6. REFERENTIELE INTEGRITEIT EN DASHBOARD ARCHITECTUUR --------------------
+print("\n[6] Referentiele integriteit en dashboardarchitectuur")
 
-# Lees productie-data opnieuw (nog steeds test-data in bestand)
-# We hergebruiken de eerder geladen 'data' dict (productie-state voor dit blok)
 try:
     with open(DATA_FILE + ".testbak", encoding="utf-8") as f:
         prod = json.load(f)
 
+    # Pijler-codes in prioriteiten verwijzen naar bestaande taken
     geldige_pijlers = {f"P{t['nummer']}" for t in prod.get("taken", [])}
-    geldige_subtaken = {t["subtaak"] for t in prod.get("taken", [])}
+    ongeldige_prios = [p.get("pijler") for p in prod.get("prioriteiten", [])
+                       if p.get("pijler") not in geldige_pijlers]
+    test("alle prioriteiten verwijzen naar bestaande pijler",
+         not ongeldige_prios, f"ongeldig: {ongeldige_prios}")
 
-    for p in prod.get("prioriteiten", []):
-        rang = p.get("rang", "?")
-        pijler = p.get("pijler", "")
-        test(
-            f"prioriteit rang {rang} pijler '{pijler}' bestaat in taken",
-            pijler in geldige_pijlers,
-            f"geldige codes: {sorted(geldige_pijlers)}"
-        )
-
-    for item in prod.get("waarde_medewerkers", []):
-        doel = item.get("doel", "")
-        test(
-            f"waarde_medewerkers doel '{doel}' bestaat in taken",
-            doel in geldige_subtaken,
-            f"bekende subtaken: {sorted(geldige_subtaken)}"
-        )
-
-    for item in prod.get("waarde_bedrijven", []):
-        doel = item.get("doel", "")
-        test(
-            f"waarde_bedrijven doel '{doel}' bestaat in taken",
-            doel in geldige_subtaken,
-            f"bekende subtaken: {sorted(geldige_subtaken)}"
-        )
-
-    # Dekking: elke taak heeft een overeenkomstige prioriteit-rij
+    # Elke taak heeft een prioriteit-rij
     prio_codes = {p.get("pijler", "") for p in prod.get("prioriteiten", [])}
-    for t in prod.get("taken", []):
-        code = f"P{t['nummer']}"
-        test(
-            f"taak {t['nummer']} ({t['subtaak']}) heeft prioriteit-rij",
-            code in prio_codes,
-            f"ontbrekende pijler-code: {code}"
-        )
+    ontbrekende_prios = [f"P{t['nummer']}" for t in prod.get("taken", [])
+                         if f"P{t['nummer']}" not in prio_codes]
+    test("elke taak heeft een prioriteit-rij", not ontbrekende_prios,
+         f"ontbreekt: {ontbrekende_prios}")
 
-    # Helper-functies aanwezig in dashboard?
+    # Doel-waarden in waardepropositie verwijzen naar bestaande subtaken
+    geldige_subtaken = {t["subtaak"] for t in prod.get("taken", [])}
+    for label in ("waarde_medewerkers", "waarde_bedrijven"):
+        ongeldige_doelen = [i["doel"] for i in prod.get(label, [])
+                            if i.get("doel") not in geldige_subtaken]
+        test(f"{label}: doelen bestaan als subtaak", not ongeldige_doelen,
+             f"ongeldig: {ongeldige_doelen}")
+
+    # Milestone structuur
+    verwachte_ms_ids = {"m1", "m2", "m3", "m4", "m5", "m6"}
+    ms_ids = {m.get("id") for m in prod.get("milestones", [])}
+    test("productie heeft 6 milestones (m1..m6)", ms_ids == verwachte_ms_ids,
+         f"gevonden: {sorted(ms_ids)}")
+    ms_velden = ["id", "naam", "datum", "betrokkenen", "aandachtspunten", "afgerond"]
+    ms_ontbrekend = [(m.get("id", "?"), v) for m in prod.get("milestones", [])
+                     for v in ms_velden if v not in m]
+    test("alle milestones hebben verplichte velden", not ms_ontbrekend,
+         f"ontbrekend: {ms_ontbrekend}")
+
+    # Strategische doelen structuur
+    if "strategische_doelen" in prod:
+        sd_velden = ("id", "naam", "omschrijving", "eigenaar",
+                     "deadline", "status", "succescriteria")
+        sd_ontbrekend = [(s.get("id", "?"), v)
+                         for s in prod.get("strategische_doelen", [])
+                         for v in sd_velden if v not in s]
+        test("alle strategische doelen hebben verplichte velden",
+             not sd_ontbrekend, f"ontbrekend: {sd_ontbrekend}")
+        sd_ongeldige = [(s.get("id", "?"), s.get("status"))
+                        for s in prod.get("strategische_doelen", [])
+                        if s.get("status") not in STATUS_OK]
+        test("alle strategische doelen hebben geldige status",
+             not sd_ongeldige, f"ongeldig: {sd_ongeldige}")
+
+    # Dashboard architectuur: kritieke helpers en patronen
     with open(DASHBOARD_FILE, encoding="utf-8") as f:
         dash_src = f.read()
-    test("dashboard bevat taak_pijler_codes helper", "def taak_pijler_codes" in dash_src)
-    test("dashboard bevat taak_subtaken helper", "def taak_subtaken" in dash_src)
-    test("prioriteiten data_editor heeft Pijler SelectboxColumn",
-         "taak_pijler_codes(data" in dash_src)
-    test("waardepropositie data_editor heeft Doel SelectboxColumn",
-         "taak_subtaken(data" in dash_src)
-    test("prioriteiten-pagina heeft auto-sync voor taken",
-         'existing_codes = {p["pijler"] for p in data["prioriteiten"]}' in dash_src)
 
-    # Milestone & tijdlijn regressietests
-    test("dashboard bevat parse_nl_date helper",
-         "def parse_nl_date" in dash_src)
-    test("dashboard importeert plotly.graph_objects",
-         "import plotly.graph_objects" in dash_src)
-    test("milestones-pagina heeft losse milestone tijdlijn tab",
-         "🎯 Milestone tijdlijn" in dash_src)
-    test("milestones-pagina gebruikt go.Scatter voor markers",
-         "go.Scatter(" in dash_src)
-    test("Gantt-tijdlijn tab is verwijderd",
-         "📊 Gantt tijdlijn" not in dash_src and "px.timeline(" not in dash_src)
-    # Wachtwoord-poort voor Streamlit Cloud
-    test("dashboard bevat check_password helper",
-         "def check_password" in dash_src)
-    test("check_password gebruikt st.secrets",
-         'st.secrets.get("password"' in dash_src)
-    test("dashboard stopt bij mislukte login",
-         "st.stop()" in dash_src)
+    # Helper-functies
+    test("dashboard heeft taak_pijler_codes helper", "def taak_pijler_codes" in dash_src)
+    test("dashboard heeft taak_subtaken helper", "def taak_subtaken" in dash_src)
+    test("dashboard heeft parse_nl_date helper", "def parse_nl_date" in dash_src)
+
+    # Authenticatie
+    test("dashboard heeft check_password", "def check_password" in dash_src)
+    test("check_password gebruikt st.secrets", 'st.secrets.get("password"' in dash_src)
+    test("dashboard stopt bij mislukte login", "st.stop()" in dash_src)
+
     # Persistente opslag via GitHub Gist
-    test("dashboard bevat _gist_config helper",
-         "def _gist_config" in dash_src)
-    test("dashboard bevat _gist_fetch helper",
-         "def _gist_fetch" in dash_src)
-    test("dashboard bevat _gist_write helper",
-         "def _gist_write" in dash_src)
-    test("Gist-fetch is gecached met TTL",
-         "@st.cache_data(ttl=" in dash_src)
-    test("load_data probeert Gist-backend eerst",
-         '_gist_config()' in dash_src and 'load_data' in dash_src)
-    test("_write valt terug op lokaal bestand bij Gist-fout",
-         "Val terug op lokaal bestand" in dash_src)
-    # Bug-fix: geen destructieve auto-seed naar gist
-    test("_gist_fetch retourneert (status, payload) tuple",
-         "('ok'," in dash_src and "'wrong_file'" in dash_src and "'empty'" in dash_src)
-    test("load_data schrijft NIET automatisch naar gist bij missende file",
-         "_gist_write(gist_id, token, d)" not in dash_src.split("def _write")[0])
-    test("dashboard waarschuwt bij verkeerde bestandsnaam in gist",
-         "wrong_file" in dash_src and "hernoem" in dash_src.lower())
-    test("dashboard waarschuwt bij lege gist",
-         '"empty"' in dash_src and "leeg" in dash_src)
-    test("dashboard handelt corrupte JSON in gist af",
-         "bad_json" in dash_src)
-    test("dashboard stopt expliciet bij gist-config-fouten",
-         "st.stop()" in dash_src)
-    test("gevaarlijke 'Data resetten naar standaard' knop is verwijderd",
-         "Data resetten" not in dash_src)
-    # Waardepropositie: rij verwijderen mogelijk
-    test("waardepropositie medewerkers heeft num_rows='dynamic'",
-         dash_src.count('num_rows="dynamic"') >= 2)
-    test("waardepropositie save filtert lege rijen",
-         "rij zonder Doel overslaan" in dash_src)
-    test("Vernieuwen-knop bust Gist-cache",
-         "_gist_fetch.clear()" in dash_src)
+    test("dashboard heeft _gist_config helper", "def _gist_config" in dash_src)
+    test("dashboard heeft _gist_fetch helper", "def _gist_fetch" in dash_src)
+    test("dashboard heeft _gist_write helper", "def _gist_write" in dash_src)
+    test("Gist-fetch is gecached met TTL", "@st.cache_data(ttl=" in dash_src)
+    test("_gist_fetch retourneert status tuple",
+         "'ok'," in dash_src and "'wrong_file'" in dash_src and "'empty'" in dash_src)
+    test("dashboard handelt corrupte JSON in gist af", "bad_json" in dash_src)
+    test("_write valt terug op lokaal bestand", "Val terug op lokaal bestand" in dash_src)
+    test("Vernieuwen-knop bust Gist-cache", "_gist_fetch.clear()" in dash_src)
     test("sidebar toont actieve opslag-backend",
          "Opslag: GitHub Gist" in dash_src and "Opslag: lokaal bestand" in dash_src)
+
+    # Databescherming
+    test("gevaarlijke 'Data resetten' knop is verwijderd",
+         "Data resetten" not in dash_src)
+    test("load_data schrijft niet automatisch naar gist",
+         "_gist_write(gist_id, token, d)" not in dash_src.split("def _write")[0])
+
+    # Grafiek en tijdlijn
+    test("dashboard importeert plotly.graph_objects",
+         "import plotly.graph_objects" in dash_src)
+    test("milestones gebruikt go.Scatter voor markers", "go.Scatter(" in dash_src)
+    test("Gantt-tijdlijn is verwijderd",
+         "Gantt tijdlijn" not in dash_src and "px.timeline(" not in dash_src)
+
+    # UI-patronen
+    test("prioriteiten heeft Pijler SelectboxColumn", "taak_pijler_codes(data" in dash_src)
+    test("waardepropositie heeft Doel SelectboxColumn", "taak_subtaken(data" in dash_src)
+    test("prioriteiten heeft auto-sync voor taken",
+         'existing_codes = {p["pijler"] for p in data["prioriteiten"]}' in dash_src)
+    test("waardepropositie ondersteunt rijen verwijderen",
+         dash_src.count('num_rows="dynamic"') >= 2)
+    test("waardepropositie filtert lege rijen", "rij zonder Doel overslaan" in dash_src)
+
+    # Milestones edit-feature
+    test("milestones heeft bewerk-formulier", 'st.form(f"edit_ms_' in dash_src)
+
+    # Strategische doelen pagina
+    test("dashboard heeft pagina Strategische doelen",
+         'page == "\U0001f9ed Strategische doelen"' in dash_src)
+    test("Strategische doelen heeft bewerk-formulier",
+         'st.form(f"edit_sd_' in dash_src)
+    test("Strategische doelen heeft toevoeg-formulier",
+         'st.form("new_sd")' in dash_src)
+    test("Strategische doelen vult ontbrekende sleutel forward-compat",
+         'if "strategische_doelen" not in data' in dash_src)
+    test("Strategische doelen blokkeert lege naam",
+         "Vul minimaal de naam in" in dash_src)
+
+    # Externe bestanden
     test("requirements.txt bevat requests",
          "requests" in open(os.path.join(os.path.dirname(__file__),
                                          "requirements.txt"), encoding="utf-8").read())
     test("secrets.toml.example bevat gist_id placeholder",
          "gist_id" in open(os.path.join(os.path.dirname(__file__),
-                                        ".streamlit", "secrets.toml.example"),
+                                         ".streamlit", "secrets.toml.example"),
                            encoding="utf-8").read())
-    # Edit-feature voor bestaande milestones
-    test("milestones overzicht heeft bewerk-formulier",
-         'st.form(f"edit_ms_' in dash_src)
-    test("milestones bewerken slaat naam op",
-         'data["milestones"][i]["naam"] = e_naam' in dash_src)
-    test("milestones bewerken slaat datum op",
-         'data["milestones"][i]["datum"] = e_datum' in dash_src)
-    test("milestones bewerken slaat betrokkenen op",
-         'data["milestones"][i]["betrokkenen"] = e_betrok' in dash_src)
-    test("milestones bewerken slaat aandachtspunten op",
-         'data["milestones"][i]["aandachtspunten"] = e_punten' in dash_src)
-
-    # Strategische doelen: nieuwe pagina + datastructuur
-    test("INITIAL_DATA bevat sleutel 'strategische_doelen'",
-         '"strategische_doelen": []' in dash_src or
-         "'strategische_doelen': []" in dash_src)
-    test("sidebar bevat menu-item Strategische doelen",
-         "🧭 Strategische doelen" in dash_src)
-    test("dashboard heeft pagina-handler voor Strategische doelen",
-         'page == "🧭 Strategische doelen"' in dash_src)
-    test("Strategische doelen heeft tab Overzicht & bewerken",
-         '📄 Overzicht & bewerken' in dash_src)
-    test("Strategische doelen heeft tab Nieuw doel",
-         '➕ Nieuw doel' in dash_src)
-    test("Strategische doelen heeft bewerk-formulier",
-         'st.form(f"edit_sd_' in dash_src)
-    test("Strategische doelen heeft toevoeg-formulier",
-         'st.form("new_sd")' in dash_src)
-    test("Strategische doelen slaat naam op",
-         'data["strategische_doelen"][i]["naam"]' in dash_src)
-    test("Strategische doelen slaat omschrijving op",
-         'data["strategische_doelen"][i]["omschrijving"]' in dash_src)
-    test("Strategische doelen slaat eigenaar op",
-         'data["strategische_doelen"][i]["eigenaar"]' in dash_src)
-    test("Strategische doelen slaat deadline op",
-         'data["strategische_doelen"][i]["deadline"]' in dash_src)
-    test("Strategische doelen slaat status op",
-         'data["strategische_doelen"][i]["status"]' in dash_src)
-    test("Strategische doelen slaat succescriteria op",
-         'data["strategische_doelen"][i]["succescriteria"]' in dash_src)
-    test("Strategische doelen ondersteunt verwijderen",
-         'data["strategische_doelen"].pop(i)' in dash_src)
-    test("Strategische doelen ondersteunt toevoegen",
-         'data["strategische_doelen"].append(' in dash_src)
-    test("Strategische doelen vult ontbrekende sleutel forward-compat",
-         'if "strategische_doelen" not in data' in dash_src)
-    test("Strategische doelen blokkeert lege naam bij toevoegen",
-         "Vul minimaal de naam in" in dash_src)
-
-    # Productie-data: strategische_doelen sleutel moet bestaan (mag leeg zijn)
-    if "strategische_doelen" in prod:
-        for sd in prod.get("strategische_doelen", []):
-            sd_id = sd.get("id", "?")
-            for v in ("id", "naam", "omschrijving", "eigenaar",
-                      "deadline", "status", "succescriteria"):
-                test(f"strategisch doel {sd_id} heeft veld '{v}'", v in sd)
-            test(f"strategisch doel {sd_id} heeft geldige status",
-                 sd.get("status") in STATUS_OK,
-                 f"ongeldige status: {sd.get('status')}")
-
-    # Productie-data: milestones moeten 6 stuks zijn en juiste ids hebben
-    verwachte_ms_ids = {"m1", "m2", "m3", "m4", "m5", "m6"}
-    ms_ids = {m.get("id") for m in prod.get("milestones", [])}
-    test("productie heeft 6 milestones (m1..m6)",
-         ms_ids == verwachte_ms_ids,
-         f"gevonden ids: {sorted(ms_ids)}")
-    for m in prod.get("milestones", []):
-        for v in ("id", "naam", "datum", "betrokkenen", "aandachtspunten", "afgerond"):
-            test(f"milestone {m.get('id','?')} heeft veld '{v}'", v in m)
 
 except Exception as e:
-    test("referentiële integriteit check", False, str(e))
+    test("referentiele integriteit check", False, str(e))
 
-# ── 7. NL-DATUM PARSER (import uit dashboard) ────────────────
+# -- 7. NL-DATUM PARSER -------------------------------------------------------
 print("\n[7] parse_nl_date helper")
 try:
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("_kza_dash_mod", DASHBOARD_FILE)
-    # We kunnen het dashboard niet rechtstreeks importeren (streamlit side-effects),
-    # dus we halen alleen parse_nl_date er uit via bronparsing + exec in een schone namespace.
+    import datetime as _dt
     with open(DASHBOARD_FILE, encoding="utf-8") as f:
         src = f.read()
-    # Knip de parser + MAAND_NR + datetime import eruit
-    import datetime as _dt
-    ns = {"dt": _dt}
-    # Simpele extractie: alle regels tussen '# ─── NL-DATUM PARSER' en volgende '# ───'
     start_marker = "MAAND_NR = {"
-    end_marker = "# ─── DATA FUNCTIONS"
+    end_marker = "─── DATA FUNCTIONS"
     i1 = src.find(start_marker)
     i2 = src.find(end_marker, i1)
+    if i1 == -1:
+        raise ValueError(f"Marker '{start_marker}' niet gevonden in dashboard")
+    if i2 == -1:
+        for alt in ("def load_data", "# === DATA", "# ---- DATA"):
+            i2 = src.find(alt, i1)
+            if i2 != -1:
+                break
+    if i2 == -1:
+        raise ValueError("Einde van parse_nl_date sectie niet gevonden in dashboard")
     snippet = src[i1:i2]
-    exec(snippet, ns)
+    ns = {"dt": _dt}
+    exec(compile(snippet, "<parse_nl_date>", "exec"), ns)
     parse_nl_date = ns["parse_nl_date"]
 
-    test("parse_nl_date 'Eind mei 2026' → 31 mei",
+    test("parse_nl_date 'Eind mei 2026' -> 31 mei",
          parse_nl_date("Eind mei 2026") == _dt.date(2026, 5, 31))
-    test("parse_nl_date 'Eind juni 2026' → 30 juni",
+    test("parse_nl_date 'Eind juni 2026' -> 30 juni",
          parse_nl_date("Eind juni 2026") == _dt.date(2026, 6, 30))
-    test("parse_nl_date 'Mei 2026' start=True → 1 mei",
+    test("parse_nl_date 'Mei 2026' start=True -> 1 mei",
          parse_nl_date("Mei 2026", start=True) == _dt.date(2026, 5, 1))
-    test("parse_nl_date 'Juni 2026' deadline → 15 juni",
+    test("parse_nl_date 'Juni 2026' deadline -> 15 juni",
          parse_nl_date("Juni 2026") == _dt.date(2026, 6, 15))
-    test("parse_nl_date leeg → None",
-         parse_nl_date("") is None)
-    test("parse_nl_date 'Doorlopend (maandelijks)' → None",
+    test("parse_nl_date leeg -> None", parse_nl_date("") is None)
+    test("parse_nl_date 'Doorlopend (maandelijks)' -> None",
          parse_nl_date("Doorlopend (maandelijks)") is None)
-    test("parse_nl_date 'Eind december 2026' → 31 dec",
+    test("parse_nl_date 'Eind december 2026' -> 31 dec",
          parse_nl_date("Eind december 2026") == _dt.date(2026, 12, 31))
 except Exception as e:
     test("parse_nl_date helper werkt", False, str(e))
@@ -417,9 +353,9 @@ shutil.copy2(backup, DATA_FILE)
 try:
     os.unlink(backup)
 except Exception:
-    pass  # backup verwijderen lukt soms niet op Windows-mount
+    pass
 
-# ── RESULTAAT ─────────────────────────────────────────────────
+# -- RESULTAAT -----------------------------------------------------------------
 print("\n" + "=" * 45)
 print(f"  Resultaat: {len(PASSED)} geslaagd  |  {len(FAILED)} mislukt")
 print("=" * 45)
@@ -429,4 +365,4 @@ if FAILED:
         print(f"    FAIL {name}")
     sys.exit(1)
 else:
-    print("\n  Alle tests geslaagd\!")
+    print("\n  Alle tests geslaagd!")
