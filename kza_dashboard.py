@@ -377,9 +377,11 @@ if page == "🏠 Dashboard":
         st.subheader("📊 Voortgang per Pijler")
         rows = []
         for t in taken:
-            label = t["pijler"].replace("PIJLER 1 – VERSPREIDING", "P1 – Verspreiding") \
-                               .replace("PIJLER 2 – KENNISVERHOGING", "P2 – Kennis") \
-                               .replace("PIJLER 3 – NIEUWE INITIATIEVEN", "P3 – Initiatieven")
+            label = t["pijler"].replace("PIJLER 1 – KENNIS EXTERN EN INTERN", "P1 – Kennis") \
+                               .replace("PIJLER 2 – KLANTEN EN RELATIES", "P2 – Klanten") \
+                               .replace("PIJLER 3 – PROPOSITIE", "P3 – Propositie") \
+                               .replace("PIJLER 4 – TOOLING", "P4 – Tooling") \
+                               .replace("PIJLER 5 – COMMUNICATIE", "P5 – Communicatie")
             rows.append({"Pijler": label, "Status": t["status"]})
         df = pd.DataFrame(rows)
         counts = df.groupby(["Pijler", "Status"]).size().reset_index(name="Aantal")
