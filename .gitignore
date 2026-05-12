@@ -18,3 +18,8 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Binaire en Office-bestanden
+*.xlsx
+*.docx
+*.skill
