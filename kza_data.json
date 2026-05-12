@@ -1,28 +1,6 @@
 {
   "taken": [
     {
-      "id": "1",
-      "nummer": "5.1",
-      "pijler": "PIJLER 5 – COMMUNICATIE",
-      "subtaak": "Maandelijkse AI-updates & initiatieven",
-      "verantwoordelijke": "Gerson + Zino",
-      "startmaand": "Mei 2026",
-      "deadline": "Doorlopend (maandelijks)",
-      "beschrijving": "Maandelijkse communicatie over AI-initiatieven, updates en voortgang. Laat zien waar we mee bezig zijn om verspreiding van AI-gebruik binnen KZA te stimuleren.",
-      "status": "Loopt"
-    },
-    {
-      "id": "2",
-      "nummer": "4.1",
-      "pijler": "PIJLER 4 – TOOLING",
-      "subtaak": "AI-tooling keuze & licentie-aanvraag",
-      "verantwoordelijke": "Gerson",
-      "startmaand": "April 2026",
-      "deadline": "Eind mei 2026",
-      "beschrijving": "Selecteren van de AI-tooling waarvoor KZA-medewerkers een licentie kunnen aanvragen. Inclusief rollout, betaling, documentatie en aanvraagproces.",
-      "status": "Loopt"
-    },
-    {
       "id": "3",
       "nummer": "1.1",
       "pijler": "PIJLER 1 – KENNIS EXTERN EN INTERN",
@@ -31,17 +9,6 @@
       "startmaand": "Mei 2026",
       "deadline": "Eind juni 2026",
       "beschrijving": "Basiscursus AI voor alle KZA-medewerkers — fundament van kennisverhoging. Bedoeld om iedereen een werkbaar startpunt te geven met AI-tools.",
-      "status": "Loopt"
-    },
-    {
-      "id": "4",
-      "nummer": "1.3",
-      "pijler": "PIJLER 1 – KENNIS EXTERN EN INTERN",
-      "subtaak": "AI Gevorderde Cursus (MCP, agents, skills)",
-      "verantwoordelijke": "Gerson",
-      "startmaand": "Juli 2026",
-      "deadline": "Eind september 2026",
-      "beschrijving": "Intern door Gerson ontwikkelde gevorderde cursus over MCP's, agents en skills. Vervolg op de basiscursus voor medewerkers die dieper willen.",
       "status": "Loopt"
     },
     {
@@ -56,36 +23,14 @@
       "status": "Klaar"
     },
     {
-      "id": "6",
-      "nummer": "3.2",
-      "pijler": "PIJLER 3 – PROPOSITIE",
-      "subtaak": "Templates & skills voor KZA-opdrachten",
-      "verantwoordelijke": "Gerson",
-      "startmaand": "Juni 2026",
-      "deadline": "Eind augustus 2026",
-      "beschrijving": "Ontwikkelen van herbruikbare skills, contextfiles en templates die KZA'ers direct kunnen gebruiken in opdrachten om snel productief te zijn met AI.",
-      "status": "Loopt"
-    },
-    {
-      "id": "7",
-      "nummer": "3.3",
-      "pijler": "PIJLER 3 – PROPOSITIE",
-      "subtaak": "AI-doelen & strategie KZA",
-      "verantwoordelijke": "Gerson + Jan",
-      "startmaand": "April 2026",
-      "deadline": "Eind mei 2026",
-      "beschrijving": "Opstellen en vastleggen van de AI-doelen voor KZA: wat willen we bereiken, hoe meten we succes, welke randvoorwaarden gelden.",
-      "status": "Loopt"
-    },
-    {
-      "id": "8",
-      "nummer": "1.5",
+      "id": "4",
+      "nummer": "1.3",
       "pijler": "PIJLER 1 – KENNIS EXTERN EN INTERN",
-      "subtaak": "Vibecoding Workshop",
-      "verantwoordelijke": "Gerson + Joost Hopmans",
-      "startmaand": "Mei 2026",
-      "deadline": "Juni 2026",
-      "beschrijving": "Gewoon lekker een dagdeel of middag/avond gaan vibecoden zonder concreet doel en/of opdracht. 26 mei gepland",
+      "subtaak": "AI Gevorderde Cursus (MCP, agents, skills)",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Juli 2026",
+      "deadline": "Eind september 2026",
+      "beschrijving": "Intern door Gerson ontwikkelde gevorderde cursus over MCP's, agents en skills. Vervolg op de basiscursus voor medewerkers die dieper willen.",
       "status": "Loopt"
     },
     {
@@ -100,14 +45,14 @@
       "status": "Loopt"
     },
     {
-      "id": "10",
-      "nummer": "3.1",
-      "pijler": "PIJLER 3 – PROPOSITIE",
-      "subtaak": "Waardepropositie Testmaite",
-      "verantwoordelijke": "Dougal + Ide",
-      "startmaand": "Maart 2026",
-      "deadline": "Eind mei ",
-      "beschrijving": "Een waardepropositie over hoe KZA AI kan gebruiken om extra waarde te kunnen leveren aan klanten in hun testproces",
+      "id": "8",
+      "nummer": "1.5",
+      "pijler": "PIJLER 1 – KENNIS EXTERN EN INTERN",
+      "subtaak": "Vibecoding Workshop",
+      "verantwoordelijke": "Gerson + Joost Hopmans",
+      "startmaand": "Mei 2026",
+      "deadline": "Juni 2026",
+      "beschrijving": "Gewoon lekker een dagdeel of middag/avond gaan vibecoden zonder concreet doel en/of opdracht. 26 mei gepland",
       "status": "Loopt"
     },
     {
@@ -131,28 +76,6 @@
       "deadline": "Juni",
       "beschrijving": "AI handleiding (AI Toolbox Sharepoint) omzetten naar een compactere versie die bruikbaar is en interactief",
       "status": "Loopt"
-    },
-    {
-      "id": "13",
-      "nummer": "4.2",
-      "pijler": "PIJLER 4 – TOOLING",
-      "subtaak": "Budget opstellen voor AI",
-      "verantwoordelijke": "Mark",
-      "startmaand": "Mei",
-      "deadline": "Juli",
-      "beschrijving": "Een budget bepalen van welke investeringen er gemaakt kunnen worden omtrent AI. Denk aan licenties, externe sprekers e.d.",
-      "status": "Gepland"
-    },
-    {
-      "id": "14",
-      "nummer": "3.4",
-      "pijler": "PIJLER 3 – PROPOSITIE",
-      "subtaak": "Verkoopverhaal AI KZA",
-      "verantwoordelijke": "",
-      "startmaand": "Mei",
-      "deadline": "Juni",
-      "beschrijving": "Hoe willen we ons als KZA profileren als het gaat om AI en waar zouden we ons dan over willen bekommeren?",
-      "status": "Gepland"
     },
     {
       "id": "15",
@@ -186,6 +109,83 @@
       "deadline": "",
       "beschrijving": "",
       "status": "Gepland"
+    },
+    {
+      "id": "10",
+      "nummer": "3.1",
+      "pijler": "PIJLER 3 – PROPOSITIE",
+      "subtaak": "Waardepropositie Testmaite",
+      "verantwoordelijke": "Dougal + Ide",
+      "startmaand": "Maart 2026",
+      "deadline": "Eind mei ",
+      "beschrijving": "Een waardepropositie over hoe KZA AI kan gebruiken om extra waarde te kunnen leveren aan klanten in hun testproces",
+      "status": "Loopt"
+    },
+    {
+      "id": "6",
+      "nummer": "3.2",
+      "pijler": "PIJLER 3 – PROPOSITIE",
+      "subtaak": "Templates & skills voor KZA-opdrachten",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "Juni 2026",
+      "deadline": "Eind augustus 2026",
+      "beschrijving": "Ontwikkelen van herbruikbare skills, contextfiles en templates die KZA'ers direct kunnen gebruiken in opdrachten om snel productief te zijn met AI.",
+      "status": "Loopt"
+    },
+    {
+      "id": "7",
+      "nummer": "3.3",
+      "pijler": "PIJLER 3 – PROPOSITIE",
+      "subtaak": "AI-doelen & strategie KZA",
+      "verantwoordelijke": "Gerson + Jan",
+      "startmaand": "April 2026",
+      "deadline": "Eind mei 2026",
+      "beschrijving": "Opstellen en vastleggen van de AI-doelen voor KZA: wat willen we bereiken, hoe meten we succes, welke randvoorwaarden gelden.",
+      "status": "Loopt"
+    },
+    {
+      "id": "14",
+      "nummer": "3.4",
+      "pijler": "PIJLER 3 – PROPOSITIE",
+      "subtaak": "Verkoopverhaal AI KZA",
+      "verantwoordelijke": "",
+      "startmaand": "Mei",
+      "deadline": "Juni",
+      "beschrijving": "Hoe willen we ons als KZA profileren als het gaat om AI en waar zouden we ons dan over willen bekommeren?",
+      "status": "Gepland"
+    },
+    {
+      "id": "2",
+      "nummer": "4.1",
+      "pijler": "PIJLER 4 – TOOLING",
+      "subtaak": "AI-tooling keuze & licentie-aanvraag",
+      "verantwoordelijke": "Gerson",
+      "startmaand": "April 2026",
+      "deadline": "Eind mei 2026",
+      "beschrijving": "Selecteren van de AI-tooling waarvoor KZA-medewerkers een licentie kunnen aanvragen. Inclusief rollout, betaling, documentatie en aanvraagproces.",
+      "status": "Loopt"
+    },
+    {
+      "id": "13",
+      "nummer": "4.2",
+      "pijler": "PIJLER 4 – TOOLING",
+      "subtaak": "Budget opstellen voor AI",
+      "verantwoordelijke": "Mark",
+      "startmaand": "Mei",
+      "deadline": "Juli",
+      "beschrijving": "Een budget bepalen van welke investeringen er gemaakt kunnen worden omtrent AI. Denk aan licenties, externe sprekers e.d.",
+      "status": "Gepland"
+    },
+    {
+      "id": "1",
+      "nummer": "5.1",
+      "pijler": "PIJLER 5 – COMMUNICATIE",
+      "subtaak": "Maandelijkse AI-updates & initiatieven",
+      "verantwoordelijke": "Gerson + Zino",
+      "startmaand": "Mei 2026",
+      "deadline": "Doorlopend (maandelijks)",
+      "beschrijving": "Maandelijkse communicatie over AI-initiatieven, updates en voortgang. Laat zien waar we mee bezig zijn om verspreiding van AI-gebruik binnen KZA te stimuleren.",
+      "status": "Loopt"
     },
     {
       "id": "19",

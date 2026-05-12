@@ -129,11 +129,18 @@ INITIAL_DATA = {
 STATUS_OPTIONS = ["Gepland", "Loopt", "Klaar", "Vertraagd"]
 MONTHS = ["Mei", "Juni", "Juli", "Aug", "Sep", "Okt"]
 
+def _num_key(t):
+    try:
+        a, b = t["nummer"].split(".")
+        return (int(a), int(b))
+    except Exception:
+        return (999, 999)
+
 def taak_pijler_codes(taken):
-    return [f"P{t['nummer']}" for t in taken]
+    return [f"P{t['nummer']}" for t in sorted(taken, key=_num_key)]
 
 def taak_subtaken(taken):
-    return [t["subtaak"] for t in taken]
+    return [t["subtaak"] for t in sorted(taken, key=_num_key)]
 
 # ─── NL-DATUM PARSER ─────────────────────────────────────────
 MAAND_NR = {
@@ -416,7 +423,7 @@ if page == "🏠 Dashboard":
 
     st.divider()
     st.subheader("🔴 Openstaande taken")
-    open_taken = [t for t in taken if t["status"] != "Klaar"]
+    open_taken = sorted([t for t in taken if t["status"] != "Klaar"], key=_num_key)
     if open_taken:
         df_open = pd.DataFrame(open_taken)[["nummer", "subtaak", "verantwoordelijke", "deadline", "status"]]
         df_open.columns = ["#", "Subtaak", "Verantwoordelijke", "Deadline", "Status"]
@@ -437,9 +444,12 @@ elif page == "📋 Taken":
         with col2:
             sf = st.selectbox("Filter status", ["Alle"] + STATUS_OPTIONS)
 
-        filtered = [t for t in data["taken"]
-                    if (pf == "Alle" or t["pijler"] == pf)
-                    and (sf == "Alle" or t["status"] == sf)]
+        filtered = sorted(
+            [t for t in data["taken"]
+             if (pf == "Alle" or t["pijler"] == pf)
+             and (sf == "Alle" or t["status"] == sf)],
+            key=_num_key
+        )
 
         if not filtered:
             st.info("Geen taken gevonden met deze filters.")
